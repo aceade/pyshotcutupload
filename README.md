@@ -1,7 +1,7 @@
 # pyshotcutupload
 A Python utility for uploading Shotcut projects to a server for rendering/exporting. 
 
-(Shotcut)[https://shotcut.org/] is an open-source, cross-platform video editor built upon the (MLT)[https://www.mltframework.org/] framework. This was originally written so I could reuse a Linux Mint desktop as a rendering/export server for Shotcut, along with getting some further experience with Python.
+[Shotcut](https://shotcut.org/) is an open-source, cross-platform video editor built upon the [MLT](https://www.mltframework.org/) framework. This was originally written so I could reuse a Linux Mint desktop as a rendering/export server for Shotcut, along with getting some further experience with Python.
 
 ## Requirements
 A server with Shotcut installed. SSH must be enabled on this and set to use SSH keys.
@@ -38,4 +38,4 @@ Copy the config.example.yml file to config.yml and update as follows:
 TODO
 
 ## Licence
-MIT (see the (LICENCE)[./LICENCE] file).
+MIT (see the [LICENCE](./LICENCE) file).
