@@ -4,10 +4,10 @@ A Python utility for uploading Shotcut projects to a server for rendering/export
 [Shotcut](https://shotcut.org/) is an open-source, cross-platform video editor built upon the [MLT](https://www.mltframework.org/) framework. This was originally written so I could reuse a Linux Mint desktop as a rendering/export server for Shotcut, along with getting some further experience with Python.
 
 ## Requirements
-A server with Shotcut installed. SSH must be enabled on this and set to use SSH keys.
-Python 3.8.10 or later
+- A server with Shotcut installed. SSH must be enabled on this and set to use SSH keys.
+- Python 3.8.10 or later
 
-## Installation
+## Building and configuring
 `pip install -r requirements.txt`
 
 ### SSH setup
@@ -19,8 +19,6 @@ If SSH is _not_ set up on your server (e.g. you are repurposing an old desktop) 
 	- Fill out the passphrase. Take note of this for later.
 4. Copy this to your server by running `ssh-copy-id user@server`, e.g. `ssh-copy-id admin@1.2.3.4`. When prompted for a password, use the password associated with the remote server. Do *not* use the passphrase for the SSH key.
 
-## How to use this
-
 ### Configuration file
 Copy the config.example.yml file to config.yml and update as follows:
 1. Replace the username field with the username you will use to access the server
@@ -29,10 +27,10 @@ Copy the config.example.yml file to config.yml and update as follows:
 4. Replace the path in the key_path variable with the actual path to the folder that contains the `id_rsa` file. In most cases, this will be `$HOME/.ssh`.
 5. Replace the key_pass variable with the passphrase defined above.
 
-### Running
+## Running
 `python uploader.py path/to/mlt_file path/to/remote_dir`
-- The mtl_file is the format in which Shotcut saves projects.
-- The remote_dir is the remote directory to which to upload them, relative to the remote user's home directory (e.g. Videos/Test instead of /home/admin/Videos/Test)
+- The `mtl_file` is the format in which Shotcut saves projects.
+- The `remote_dir` is the remote directory to which to upload them, relative to the remote user's home directory (e.g. Videos/Test instead of /home/admin/Videos/Test)
 
 ### Troubleshooting
 TODO
