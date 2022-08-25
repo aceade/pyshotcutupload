@@ -1,0 +1,9 @@
+# The name of the remote user used to access the server
+username: "admin"
+host: "1.2.3.4"
+# The SSH/SFTP port. Defaults to 22 if not set
+port: 22
+# path to the directory that contains your SSH key for the server
+key_path: "$HOME/.ssh"
+# the passphrase for the SSH key
+key_pass: "password"
