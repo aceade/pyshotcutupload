@@ -1,14 +1,24 @@
 # pyshotcutupload
-A Python utility for uploading Shotcut projects to a server for rendering/exporting. 
+A Python utility for uploading Shotcut projects to a server for rendering/exporting.
 
 [Shotcut](https://shotcut.org/) is an open-source, cross-platform video editor built upon the [MLT](https://www.mltframework.org/) framework. This was originally written so I could reuse a Linux Mint desktop as a rendering/export server for Shotcut, along with getting some further experience with Python.
 
+## How it works
+This performs the following tasks in order:
+1. Parse required arguments.
+2. Read configuration from the config.yml file.
+3. Issue a ping command to the server to check if it is up (and exit if this fails).
+4. Parse the MLT file into which Shotcut saves projects, looking for any tag defined as `<property name="resource">`.
+5. Copy each file mentioned in the above tags to the local directory and strip out the path from the tag. This effectively points the Shotcut project at the local files instead of using absolute paths
+6. Rewrite the MTL file's XML tree into a new file to preserve the original.
+6. Upload all files to the server
+
 ## Requirements
 - A server with Shotcut installed. SSH must be enabled on this and set to use SSH keys.
-- Python 3.8.10 or later
+- Python 3.8.10 or later on your local machine
 
 ## Building and configuring
-`pip install -r requirements.txt`
+Install the required packages (paramiko and pyyaml) by running `pip install -r requirements.txt`.
 
 ### SSH setup
 If SSH is _not_ set up on your server (e.g. you are repurposing an old desktop) or does not use SSH keys, set up SSH as follows:
@@ -29,6 +39,7 @@ Copy the config.example.yml file to config.yml and update as follows:
 
 ## Running
 `python uploader.py path/to/mlt_file path/to/remote_dir`
+Both parameters are required.
 - The `mtl_file` is the format in which Shotcut saves projects.
 - The `remote_dir` is the remote directory to which to upload them, relative to the remote user's home directory (e.g. Videos/Test instead of /home/admin/Videos/Test)
 
