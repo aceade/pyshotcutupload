@@ -69,7 +69,7 @@ def get_resource_files(file):
     for path in res_paths:
         ## Account for WSL. There is probably a better way to do this
         fp = PurePath(path.replace('C:', '/mnt/c').replace('D:', '/mnt/d'))
-        subprocess.run(["cp", fp, "."])
+        subprocess.run(["cp", fp, "$(pwd)"])
     return clean_paths(file, res_paths)
 
 def get_config():

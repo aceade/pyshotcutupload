@@ -48,3 +48,7 @@ TODO
 
 ## Licence
 MIT (see the [LICENCE](./LICENCE) file).
+
+### Other files
+- [MODEM_3.aiff](https://freesound.org/people/G_M_D_THREE/sounds/454649/) (CC0)
+- [wah wah sad trombone.wav](https://freesound.org/people/kirbydx/sounds/175409/) (CC0)
