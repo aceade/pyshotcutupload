@@ -40,7 +40,7 @@ Copy the config.example.yml file to config.yml and update as follows:
 ## Running
 `python uploader.py path/to/mlt_file path/to/remote_dir`
 Both parameters are required.
-- The `mtl_file` is the format in which Shotcut saves projects.
+- The `mlt_file` is the format in which Shotcut saves projects.
 - The `remote_dir` is the remote directory to which to upload them, relative to the remote user's home directory (e.g. Videos/Test instead of /home/admin/Videos/Test)
 
 ### Troubleshooting

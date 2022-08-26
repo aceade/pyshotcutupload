@@ -81,12 +81,15 @@ def get_config():
 
 def loop_server(host):
     attempts = 0
-    while check_server_up(host) is False:
+    is_up = False
+    while attempts < 5:
+        is_up = check_server_up(host)
+        if is_up is True:
+            break
+        logging.info("Attempt %i failed", attempts+1)
         attempts += 1
-    if (attempts >= 10):
-        return False
-    else:
-        return True
+
+    return is_up
 
 parser = argparse.ArgumentParser(description="Upload files")
 parser.add_argument("file", type=str, help="The path to the MLT file")
