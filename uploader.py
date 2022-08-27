@@ -74,9 +74,10 @@ def get_resource_files(file):
     res_paths = get_resource_paths(file)
     for path in res_paths:
         if path.startswith("/") is False:
+            # accounting for relative paths
             fp = PurePath(file.replace(str(PurePath(file).name), '') + "/" + path)
         else:
-            ## Account for WSL. There is probably a better way to do this
+            # Account for WSL. There is probably a better way to do this
             fp = PurePath(path.replace('C:', '/mnt/c').replace('D:', '/mnt/d'))
         logging.info(fp)
         subprocess.run(["cp", "-r", fp, "."])
@@ -115,7 +116,7 @@ host = config["host"]
 if (loop_server(host) is True):
     logging.info("Server is up, we shall proceed")
     files = get_resource_files(mlt_file)
-    # cleanup
+    # Copy the "cleaned" file to the local directory. TODO: remove all temp files
     subprocess.run(["cp", mlt_file.replace(".mlt", "_fixed.mlt"), "."])
     logging.info("Files: %s", files)
     upload_files(files, str("/home/" + config["username"] + "/" + remote_dir), config)
