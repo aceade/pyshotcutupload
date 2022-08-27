@@ -11,7 +11,12 @@ This performs the following tasks in order:
 4. Parse the MLT file into which Shotcut saves projects, looking for any tag defined as `<property name="resource">`.
 5. Copy each file mentioned in the above tags to the local directory and strip out the path from the tag. This effectively points the Shotcut project at the local files instead of using absolute paths
 6. Rewrite the MTL file's XML tree into a new file to preserve the original.
-6. Upload all files to the server
+6. Upload all files to the server.
+
+### Limitations
+- There may be issues on different operating systems. This is currently tested on Ubuntu under WSL, but the original development work was done under Git Bash on Windows.
+- This will not open Shotcut on the remote server, and using the MLT framework directly has not been tested.
+- There is currently no way to check when Shotcut has finished exporting.
 
 ## Requirements
 - A server with Shotcut installed. SSH must be enabled on this and set to use SSH keys.
@@ -38,13 +43,16 @@ Copy the config.example.yml file to config.yml and update as follows:
 5. Replace the key_pass variable with the passphrase defined above.
 
 ## Running
-`python uploader.py path/to/mlt_file path/to/remote_dir`
+Run the following command: `python3 uploader.py path/to/mlt_file path/to/remote_dir`, e.g. `python3 uploader.py examples/PyShotcutUploader.mlt Videos/UploadedFailer`
 Both parameters are required.
 - The `mlt_file` is the format in which Shotcut saves projects.
 - The `remote_dir` is the remote directory to which to upload them, relative to the remote user's home directory (e.g. Videos/Test instead of /home/admin/Videos/Test)
 
+### Video of this running
+https://youtu.be/tduc-3BZ388
+
 ### Troubleshooting
-TODO
+Check that you haven't missed the config.yml file and that all paths are correct.
 
 ## Licence
 MIT (see the [LICENCE](./LICENCE) file).
