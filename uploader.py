@@ -1,3 +1,4 @@
+# coding: utf-8
 import argparse
 import subprocess
 import logging
@@ -39,8 +40,8 @@ def upload_files(directory, remote_dir, config):
             # If the forward slash is omitted, it becomes e.g. AAutomationTestsadtrombone.wav
             sftp.put(localpath=file, remotepath=remote_dir + '/' + file, confirm=True)
         logging.info("All files uploaded")
-    except FileNotFoundError as e:
-        logging.error(e)
+    except FileNotFoundError as err:
+        logging.error(err)
     client.close()
 
 
