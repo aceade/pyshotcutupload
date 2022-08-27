@@ -2,7 +2,7 @@ import argparse
 import subprocess
 import logging
 from paramiko.client import SSHClient
-from pathlib import PurePath
+from pathlib import Path, PurePath
 import xml.etree.cElementTree as et
 from yaml import load, Loader
 
@@ -31,12 +31,16 @@ def upload_files(directory, remote_dir, config):
         sftp.mkdir(remote_dir)
     
     sftp.chdir(remote_dir)
-    for file in directory:
-        logging.info("Uploading %s", file)
-        # The remotepath should contain the file name. If the forward slash is omitted, it becomes e.g. AAutomationTestsadtrombone.wav
-        sftp.put(localpath=file, remotepath=remote_dir + '/' + file, confirm=True)
+    try:
+        for file in directory:
+            logging.info("Uploading %s", file)
+            # The remotepath should contain the file name. If the forward slash is omitted, it becomes e.g. AAutomationTestsadtrombone.wav
+            sftp.put(localpath=file, remotepath=remote_dir + '/' + file, confirm=True)
+        logging.info("All files uploaded")
+    except FileNotFoundError as e:
+        logging.error(e)
     client.close()
-    logging.info("All files uploaded")
+
 
 def get_resource_paths(file):
     paths = []
@@ -44,12 +48,13 @@ def get_resource_paths(file):
     root = tree.getroot()
     for el in root.iter("chain"):
         for property in el.iter("property"):
-            # The resource attribute 
+            # The resource attribute is what contains the path to the file
             if property.attrib['name'] == 'resource':
                 paths.append(property.text)
     return paths
 
 def clean_paths(file, res_paths):
+    cleaned_file = file.replace('.mlt', '_fixed.mlt')
     cleaned_paths = []
     tree = et.parse(file)
     root = tree.getroot()
@@ -59,23 +64,27 @@ def clean_paths(file, res_paths):
                 cleaned = property.text[(property.text.rindex('/'))+1:]
                 cleaned_paths.append(cleaned)
                 property.text = cleaned
-    tree.write(file.replace('.mlt', '_fixed.mlt'))
+
+    # Save to a new file with all paths adjusted to be relative to the project
+    tree.write(cleaned_file)
+    cleaned_paths.append(str(Path(cleaned_file).name))
     return cleaned_paths
 
 def get_resource_files(file):
     res_paths = get_resource_paths(file)
-    print(res_paths)
-    cur_dir = PurePath(".")
     for path in res_paths:
-        ## Account for WSL. There is probably a better way to do this
-        fp = PurePath(path.replace('C:', '/mnt/c').replace('D:', '/mnt/d'))
-        subprocess.run(["cp", fp, "$(pwd)"])
+        if path.startswith("/") is False:
+            fp = PurePath(file.replace(str(PurePath(file).name), '') + "/" + path)
+        else:
+            ## Account for WSL. There is probably a better way to do this
+            fp = PurePath(path.replace('C:', '/mnt/c').replace('D:', '/mnt/d'))
+        logging.info(fp)
+        subprocess.run(["cp", "-r", fp, "."])
     return clean_paths(file, res_paths)
 
 def get_config():
     config = None
     with open("config.yml") as file:
-        #stream = file("config.yml", "r")
         config = load(file, Loader=Loader)
     return config
 
@@ -106,9 +115,9 @@ host = config["host"]
 if (loop_server(host) is True):
     logging.info("Server is up, we shall proceed")
     files = get_resource_files(mlt_file)
+    # cleanup
+    subprocess.run(["cp", mlt_file.replace(".mlt", "_fixed.mlt"), "."])
     logging.info("Files: %s", files)
-    files.append("AutomationTest_fixed.mlt")
-    logging.info("Files are now: %s", files)
     upload_files(files, str("/home/" + config["username"] + "/" + remote_dir), config)
 else:
     logging.warning("The server is not up yet!")
