@@ -54,7 +54,8 @@ def get_resource_paths(file):
             # The resource attribute is what contains the path to the file
             if prop.attrib['name'] == 'resource':
                 paths.append(prop.text)
-    return paths
+    # prevent duplicates
+    return list(set(paths))
 
 def clean_paths(file, res_paths):
     cleaned_file = file.replace('.mlt', '_fixed.mlt')
@@ -104,6 +105,12 @@ def loop_server(host):
 
     return is_up
 
+def remove_temporary_files(files):
+    logging.info("Cleaning up %i temporary files", len(files))
+    for file in files:
+        subprocess.run(["rm", file], check=True)
+
+
 def main():
     parser = argparse.ArgumentParser(description="Upload files")
     parser.add_argument("file", type=str, help="The path to the MLT file")
@@ -120,11 +127,11 @@ def main():
 
     if loop_server(host) is True:
         logging.info("Server is up, we shall proceed")
-        files = get_resource_files(mlt_file)
-        # Copy the "cleaned" file to the local directory. TODO: remove all temp files
+        files = set(get_resource_files(mlt_file))
         subprocess.run(["cp", mlt_file.replace(".mlt", "_fixed.mlt"), "."], check=True)
         logging.info("Files: %s", files)
         upload_files(files, str("/home/" + config["username"] + "/" + remote_dir), config)
+        remove_temporary_files(files)
     else:
         logging.warning("The server is not up yet!")
 
