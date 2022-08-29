@@ -18,7 +18,7 @@ def upload_files(directory, remote_dir, config):
     port = config["port"] or 22
     private_key = str(config["key_path"]) + "/id_rsa"
     private_key_pass = config["key_pass"]
-    logging.info("Uploading to %s", remote_dir)
+    logging.info("Uploading %s to %s", directory, remote_dir)
 
     client = SSHClient()
     client.load_system_host_keys()
@@ -39,9 +39,14 @@ def upload_files(directory, remote_dir, config):
             # The remotepath should contain the file name.
             # If the forward slash is omitted, it becomes e.g. AAutomationTestsadtrombone.wav
             sftp.put(localpath=file, remotepath=remote_dir + '/' + file, confirm=True)
-        logging.info("All files uploaded")
+        logging.info("All files uploaded. Remote dir: %s", sftp.listdir(remote_dir))
+        
     except FileNotFoundError as err:
         logging.error(err)
+    client.close()
+    client.connect(host, port=port, username=username,
+                   key_filename=private_key, passphrase=private_key_pass)
+    client.exec_command("shotcut &")
     client.close()
 
 
