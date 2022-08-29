@@ -11,7 +11,8 @@ This performs the following tasks in order:
 4. Parse the MLT file into which Shotcut saves projects, looking for any tag defined as `<property name="resource">`.
 5. Copy each file mentioned in the above tags to the local directory and strip out the path from the tag. This effectively points the Shotcut project at the local files instead of using absolute paths
 6. Rewrite the MTL file's XML tree into a new file to preserve the original.
-6. Upload all files to the server.
+7. Upload all files to the server.
+8. Delete the temporary files
 
 ### Limitations
 - There may be issues on different operating systems. This is currently tested on Ubuntu under WSL, but the original development work was done under Git Bash on Windows.
