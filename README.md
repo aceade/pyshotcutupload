@@ -49,8 +49,9 @@ Both parameters are required.
 - The `mlt_file` is the format in which Shotcut saves projects.
 - The `remote_dir` is the remote directory to which to upload them, relative to the remote user's home directory (e.g. Videos/Test instead of /home/admin/Videos/Test)
 
-### Video of this running
+### Videos of this running
 [Failure](https://youtu.be/tduc-3BZ388)
+[Success](https://youtu.be/CVf-wkTxUVs)
 
 ### Troubleshooting
 - Check that you haven't missed the config.yml file and that all paths are correct in the Shotcut project.
