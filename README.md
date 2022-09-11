@@ -54,7 +54,7 @@ Both parameters are required.
 
 ### Troubleshooting
 - Check that you haven't missed the config.yml file and that all paths are correct in the Shotcut project.
-- Check that your SSH key and passphrase match that of the server
+- Check that the SSH host, port, SSH key and passphrase match that of the server
 
 ## Licence
 MIT (see the [LICENCE](./LICENCE) file).
