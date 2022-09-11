@@ -18,6 +18,7 @@ def upload_files(directory, remote_dir, config):
     port = config["port"] or 22
     private_key = str(config["key_path"]) + "/id_rsa"
     private_key_pass = config["key_pass"]
+    shotcut = config["shotcut"]
     logging.info("Uploading %s to %s", directory, remote_dir)
 
     client = SSHClient()
@@ -44,9 +45,10 @@ def upload_files(directory, remote_dir, config):
     except FileNotFoundError as err:
         logging.error(err)
     client.close()
+    logging.info("Reconnecting to run Shotcut cmd: {}".format(shotcut))
     client.connect(host, port=port, username=username,
                    key_filename=private_key, passphrase=private_key_pass)
-    client.exec_command("shotcut &")
+    client.exec_command(shotcut)
     client.close()
 
 

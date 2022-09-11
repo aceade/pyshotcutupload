@@ -7,3 +7,4 @@ port: 22
 key_path: "$HOME/.ssh"
 # the passphrase for the SSH key
 key_pass: "password"
+shotcut: "/usr/bin/flatpak --command=shotcut"
