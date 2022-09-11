@@ -2,10 +2,11 @@
 import argparse
 import subprocess
 import logging
+import sys
 from pathlib import Path, PurePath
 import xml.etree.cElementTree as et
 from paramiko.client import SSHClient
-from paramiko.ssh_exception import *
+from paramiko.ssh_exception import BadHostKeyException, SSHException
 from yaml import load, Loader
 
 def check_server_up(address):
@@ -25,7 +26,7 @@ def upload_files(directory, remote_dir, config):
         client = SSHClient()
         client.load_system_host_keys()
         client.connect(host, port=port, username=username,
-                    key_filename=private_key, passphrase=private_key_pass)
+                       key_filename=private_key, passphrase=private_key_pass)
         sftp = client.open_sftp()
 
         # Check if the folder exists. If not, create it
@@ -101,8 +102,8 @@ def get_config():
             return load(file, Loader=Loader)
     except FileNotFoundError:
         logging.error("config.yml not found! Check that the file exists and is named correctly!")
-        subprocess.run(["ls"])
-        exit(-1)
+        subprocess.run(["ls"], check=True)
+        sys.exit(-1)
 
 def loop_server(host):
     attempts = 0
