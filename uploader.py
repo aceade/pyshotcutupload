@@ -88,10 +88,13 @@ def get_resource_files(file):
     return clean_paths(file, res_paths)
 
 def get_config():
-    config = None
-    with open("config.yml") as file:
-        config = load(file, Loader=Loader)
-    return config
+    try:
+        with open("config.yml") as file:
+            return load(file, Loader=Loader)
+    except FileNotFoundError:
+        logging.error("config.yml not found! Check that the file exists and is named correctly!")
+        subprocess.run(["ls"])
+        exit(-1)
 
 def loop_server(host):
     attempts = 0
