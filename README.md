@@ -50,10 +50,11 @@ Both parameters are required.
 - The `remote_dir` is the remote directory to which to upload them, relative to the remote user's home directory (e.g. Videos/Test instead of /home/admin/Videos/Test)
 
 ### Video of this running
-https://youtu.be/tduc-3BZ388
+[Failure](https://youtu.be/tduc-3BZ388)
 
 ### Troubleshooting
-Check that you haven't missed the config.yml file and that all paths are correct.
+- Check that you haven't missed the config.yml file and that all paths are correct in the Shotcut project.
+- Check that the SSH host, port, SSH key and passphrase match that of the server
 
 ## Licence
 MIT (see the [LICENCE](./LICENCE) file).

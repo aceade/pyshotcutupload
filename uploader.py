@@ -2,9 +2,11 @@
 import argparse
 import subprocess
 import logging
+import sys
 from pathlib import Path, PurePath
 import xml.etree.cElementTree as et
 from paramiko.client import SSHClient
+from paramiko.ssh_exception import BadHostKeyException, SSHException
 from yaml import load, Loader
 
 def check_server_up(address):
@@ -20,29 +22,36 @@ def upload_files(directory, remote_dir, config):
     private_key_pass = config["key_pass"]
     logging.info("Uploading to %s", remote_dir)
 
-    client = SSHClient()
-    client.load_system_host_keys()
-    client.connect(host, port=port, username=username,
-                   key_filename=private_key, passphrase=private_key_pass)
-    sftp = client.open_sftp()
-
-    # Check if the folder exists. If not, create it
     try:
-        sftp.listdir(remote_dir)
-    except IOError:
-        sftp.mkdir(remote_dir)
+        client = SSHClient()
+        client.load_system_host_keys()
+        client.connect(host, port=port, username=username,
+                       key_filename=private_key, passphrase=private_key_pass)
+        sftp = client.open_sftp()
 
-    sftp.chdir(remote_dir)
-    try:
-        for file in directory:
-            logging.info("Uploading %s", file)
-            # The remotepath should contain the file name.
-            # If the forward slash is omitted, it becomes e.g. AAutomationTestsadtrombone.wav
-            sftp.put(localpath=file, remotepath=remote_dir + '/' + file, confirm=True)
-        logging.info("All files uploaded")
-    except FileNotFoundError as err:
-        logging.error(err)
-    client.close()
+        # Check if the folder exists. If not, create it
+        try:
+            sftp.listdir(remote_dir)
+        except IOError:
+            sftp.mkdir(remote_dir)
+
+        sftp.chdir(remote_dir)
+        try:
+            for file in directory:
+                logging.info("Uploading %s", file)
+                # The remotepath should contain the file name.
+                # If the forward slash is omitted, it becomes e.g. AAutomationTestsadtrombone.wav
+                sftp.put(localpath=file, remotepath=remote_dir + '/' + file, confirm=True)
+            logging.info("All files uploaded")
+        except FileNotFoundError as err:
+            logging.error(err)
+        client.close()
+    except BlockingIOError:
+        logging.error("Can't reach the server. Check that you have the right SSH port")
+    except BadHostKeyException:
+        logging.error("Bad Host Key. Check that the SSH key matches the server")
+    except SSHException as ssh_error:
+        logging.error(ssh_error)
 
 
 def get_resource_paths(file):
@@ -88,10 +97,13 @@ def get_resource_files(file):
     return clean_paths(file, res_paths)
 
 def get_config():
-    config = None
-    with open("config.yml") as file:
-        config = load(file, Loader=Loader)
-    return config
+    try:
+        with open("config.yml") as file:
+            return load(file, Loader=Loader)
+    except FileNotFoundError:
+        logging.error("config.yml not found! Check that the file exists and is named correctly!")
+        subprocess.run(["ls"], check=True)
+        sys.exit(-1)
 
 def loop_server(host):
     attempts = 0
